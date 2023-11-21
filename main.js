@@ -65,6 +65,13 @@ const playGame = function (row, col) {
 
   checkWin();
   console.log(checkWin());
+  const container = document.querySelector('.container');
+
+  //erase contents of container
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
+  renderGameBoard();
 };
 
 function checkWin() {
@@ -104,5 +111,19 @@ function checkWin() {
 
   return 'no win'; // No win
 }
+
+const renderGameBoard = function () {
+  const container = document.querySelector('.container');
+
+  gameBoard.forEach((row, rowIndex) => {
+    row.forEach((cell, colIndex) => {
+      const tile = document.createElement('div');
+      tile.classList.add('tile');
+      tile.dataset.index = `${rowIndex}-${colIndex}`;
+      tile.innerText = cell;
+      container.append(tile);
+    });
+  });
+};
 
 playGame(1, 1);
