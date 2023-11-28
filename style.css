@@ -1,6 +1,4 @@
 .tile {
-  color: white;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   font-size: 80px;
   background-color: grey;
   border: 1px solid black;
@@ -12,12 +10,40 @@
 }
 
 body {
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   height: 100vh;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(32, 32, 43);
+  color: white;
 }
 
 .container {
   display: grid;
+  place-items: center;
+}
+
+.gameboard {
   grid-template-columns: 1fr 1fr 1fr;
+}
+
+.symbols {
+  display: grid;
+  grid-auto-flow: column;
+  place-items: center;
+  gap: 20px;
+}
+
+.symbols div {
+  display: grid;
+  place-items: center;
+  background-color: grey;
+  width: 100px;
+  height: 100px;
+}
+
+.winner {
+  margin: 50px;
 }
