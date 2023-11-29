@@ -84,7 +84,7 @@ const selectBox = function (players) {
 //need to add logic to determine if there is a tie!
 //fix issue where declareWinner runs twice. probably has to do with checkWin function`
 //play round of tic tac toe
-const playGame = function (row, col, players) {
+const playGame = function (row, col, players, moves) {
   //player one selects square
   if (gameBoard[row][col] === '') {
     gameBoard[row][col] = players.player;
