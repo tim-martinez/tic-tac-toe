@@ -21,7 +21,29 @@ const createPlayer = function (symbol) {
   let playerScore = 0;
   let computerScore = 0;
 
-  return { player, playerScore, computer, computerScore };
+  let moves = 0;
+
+  return { player, playerScore, computer, computerScore, moves };
+};
+
+//display the game board
+const renderGameBoard = function () {
+  const container = document.querySelector('.container');
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
+  container.classList.add('gameboard');
+
+  gameBoard.forEach((row, rowIndex) => {
+    row.forEach((cell, colIndex) => {
+      const tile = document.createElement('div');
+      tile.classList.add('tile');
+      tile.dataset.row = `${rowIndex}`;
+      tile.dataset.col = `${colIndex}`;
+      tile.innerText = cell;
+      container.append(tile);
+    });
+  });
 };
 
 //player selects symbol
@@ -44,6 +66,23 @@ const playerSelect = (function () {
   });
 })();
 
+//click events for squares
+const selectBox = function (players) {
+  const tile = document.querySelectorAll('.tile');
+
+  tile.forEach(function (element) {
+    element.addEventListener('click', function () {
+      players.moves++;
+      console.log(`moves: ${players.moves}`);
+      const row = element.dataset.row;
+      const col = element.dataset.col;
+      playGame(row, col, players);
+    });
+  });
+};
+
+//need to add logic to determine if there is a tie!
+//fix issue where declareWinner runs twice. probably has to do with checkWin function
 //play round of tic tac toe
 const playGame = function (row, col, players) {
   //player one selects square
@@ -53,11 +92,9 @@ const playGame = function (row, col, players) {
     return 'choose another square';
   }
 
-  if (checkWin() === true) {
-    console.log('winner stop game! - 1st check');
-    // checkWin();
-    // renderGameBoard();
-    return true;
+  //check for tie game
+  if (checkWin(players) === false && players.moves === 5) {
+    return 'tie game!';
   }
 
   //declare random indices
@@ -74,8 +111,6 @@ const playGame = function (row, col, players) {
   ) {
     randomRow = getRandomIndex();
     randomColumn = getRandomIndex();
-    console.log(`row changed to: ${randomRow}`);
-    console.log(`column changed to ${randomColumn}`);
   }
 
   //computer plays at empty index
@@ -83,118 +118,103 @@ const playGame = function (row, col, players) {
     gameBoard[randomRow][randomColumn] = players.computer;
   }
 
-  if (checkWin() === true) {
-    // checkWin();
-    console.log('winner stop game!  - 2nd check');
-    renderGameBoard();
-    return true;
-  }
-  console.log(checkWin());
-  const container = document.querySelector('.container');
-
-  //erase contents of container
-  while (container.firstChild) {
-    container.removeChild(container.firstChild);
-  }
   renderGameBoard();
-  if (checkWin() === true) {
+
+  if (checkWin(players) === true) {
     return;
   }
+
   selectBox(players);
 };
 
 //check if there is a winner
-function checkWin() {
+const checkWin = function (players) {
   // Check rows and columns
   for (let i = 0; i < 3; i++) {
+    // Row win
     if (
       gameBoard[i][0] !== '' &&
       gameBoard[i][0] === gameBoard[i][1] &&
       gameBoard[i][0] === gameBoard[i][2]
     ) {
       const winner = gameBoard[i][0];
+      //add to winner's score
+      if (winner === players.player) {
+        players.playerScore++;
+      } else {
+        players.computerScore++;
+      }
+
       renderGameBoard();
-      declareWinner(winner); // Row win
+      declareWinner(winner, players);
       return true;
     }
+    // column win
     if (
       gameBoard[0][i] !== '' &&
       gameBoard[0][i] === gameBoard[1][i] &&
       gameBoard[0][i] === gameBoard[2][i]
     ) {
       const winner = gameBoard[0][i];
+      //add to winner's score
+      if (winner === players.player) {
+        players.playerScore++;
+      } else {
+        players.computerScore++;
+      }
       renderGameBoard();
-      declareWinner(winner); // column win
+      declareWinner(winner, players);
       return true;
     }
   }
 
   // Check diagonals
+  // Diagonal from top-left to bottom-right
   if (
     gameBoard[0][0] !== '' &&
     gameBoard[0][0] === gameBoard[1][1] &&
     gameBoard[0][0] === gameBoard[2][2]
   ) {
     const winner = gameBoard[0][0];
+    //add to winner's score
+    if (winner === players.player) {
+      players.playerScore++;
+    } else {
+      players.computerScore++;
+    }
     renderGameBoard();
-    declareWinner(winner);
-    return true; // Diagonal from top-left to bottom-right
+    declareWinner(winner, players);
+    return true;
   }
+  // Diagonal from top-right to bottom-left
   if (
     gameBoard[0][2] !== '' &&
     gameBoard[0][2] === gameBoard[1][1] &&
     gameBoard[0][2] === gameBoard[2][0]
   ) {
     const winner = gameBoard[0][2];
+    //add to winner's score
+    if (winner === players.player) {
+      players.playerScore++;
+    } else {
+      players.computerScore++;
+    }
     renderGameBoard();
-    declareWinner(winner);
-    return true; // Diagonal from top-right to bottom-left
+    declareWinner(winner, players);
+    return true;
   }
-
   return false; // No win
-}
-
-//display the game board
-const renderGameBoard = function () {
-  const container = document.querySelector('.container');
-  while (container.firstChild) {
-    container.removeChild(container.firstChild);
-  }
-  container.classList.add('gameboard');
-
-  gameBoard.forEach((row, rowIndex) => {
-    row.forEach((cell, colIndex) => {
-      const tile = document.createElement('div');
-      tile.classList.add('tile');
-      tile.dataset.row = `${rowIndex}`;
-      tile.dataset.col = `${colIndex}`;
-      tile.innerText = cell;
-      container.append(tile);
-    });
-  });
-};
-
-//click events for squares
-const selectBox = function (players) {
-  const tile = document.querySelectorAll('.tile');
-
-  tile.forEach(function (element) {
-    element.addEventListener('click', function () {
-      const row = element.dataset.row;
-      const col = element.dataset.col;
-      console.log(row + col);
-      playGame(row, col, players);
-    });
-  });
 };
 
 //declare winner
-
-const declareWinner = function (winner) {
+const declareWinner = function (winner, players) {
   const body = document.body;
   const div = document.createElement('div');
   const winnerText = document.createElement('h2');
-  winnerText.textContent = `${winner} wins!`;
+  winnerText.textContent = `${winner} wins! player score: ${players.playerScore} computer score: ${players.computerScore}`;
+
+  console.log(`player score ${players.playerScore}`);
+  console.log(`computer score: ${players.computerScore}`);
 
   div.classList = 'winner';
   div.append(winnerText);
