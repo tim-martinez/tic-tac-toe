@@ -46,4 +46,23 @@ body {
 
 .winner {
   margin: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+button {
+  background-color: rgb(75, 75, 75);
+  color: white;
+  font-size: 20px;
+  width: 200px;
+  height: 50px;
+  border-radius: 11px;
+  font-weight: 900;
+  border: 0px;
+}
+
+button:hover {
+  background-color: grey;
 }

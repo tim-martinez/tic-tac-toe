@@ -217,6 +217,23 @@ const declareWinner = function (winner, players) {
   const body = document.body;
   const div = document.createElement('div');
   const winnerText = document.createElement('h2');
+  const btn = document.createElement('button');
+
+  btn.addEventListener('click', () => {
+    //working on logic to start another round
+    //reset game board
+    for (let i = 0; i < gameBoard.length; i++) {
+      for (let j = 0; j < gameBoard.length; j++) {
+        gameBoard[i][j] = '';
+      }
+    }
+    //this needs to be corrected
+    renderGameBoard();
+    selectBox(players);
+  });
+
+  btn.textContent = 'Play again';
+
   winnerText.textContent = `${winner} wins! player score: ${players.playerScore} computer score: ${players.computerScore}`;
 
   console.log(`player score ${players.playerScore}`);
@@ -224,5 +241,6 @@ const declareWinner = function (winner, players) {
 
   div.classList = 'winner';
   div.append(winnerText);
+  div.append(btn);
   body.insertBefore(div, body.firstChild);
 };
