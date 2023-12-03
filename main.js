@@ -32,6 +32,7 @@ const renderGameBoard = function () {
   while (container.firstChild) {
     container.removeChild(container.firstChild);
   }
+
   container.classList.add('gameboard');
 
   gameBoard.forEach((row, rowIndex) => {
@@ -72,6 +73,8 @@ const selectBox = function (players) {
 
   tile.forEach(function (element) {
     element.addEventListener('click', function () {
+      //the players.moves is broken. if the player clicks on taken spaces it still counts as a move
+      //consider moving the counter somewhere else
       players.moves++;
       console.log(`moves: ${players.moves}`);
       const row = element.dataset.row;
@@ -93,10 +96,11 @@ const playGame = function (row, col, players) {
   } else {
     return 'choose another square';
   }
-  // const isWinner = checkWin(players);
-  // console.log(isWinner);
 
+  //check to handle tie game
+  //else if needs more actions to trigger tie event
   const isWinner = checkWin(players);
+
   if (isWinner) {
     return 'someone won. check #1';
   } else if (!isWinner && players.moves === 5) {
@@ -220,25 +224,21 @@ const declareWinner = function (winner, players) {
   const btn = document.createElement('button');
 
   btn.addEventListener('click', () => {
-    //working on logic to start another round
-    //reset game board
+    //reset game board / start new round
     for (let i = 0; i < gameBoard.length; i++) {
       for (let j = 0; j < gameBoard.length; j++) {
         gameBoard[i][j] = '';
       }
     }
-    //this needs to be corrected
+    //this works at removing the announcement div
+    //will be a problem if this div is no longer the first child
+    body.removeChild(body.firstChild);
     renderGameBoard();
     selectBox(players);
   });
 
   btn.textContent = 'Play again';
-
   winnerText.textContent = `${winner} wins! player score: ${players.playerScore} computer score: ${players.computerScore}`;
-
-  console.log(`player score ${players.playerScore}`);
-  console.log(`computer score: ${players.computerScore}`);
-
   div.classList = 'winner';
   div.append(winnerText);
   div.append(btn);
