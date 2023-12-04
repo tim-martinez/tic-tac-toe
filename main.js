@@ -73,9 +73,10 @@ const selectBox = function (players) {
 
   tile.forEach(function (element) {
     element.addEventListener('click', function () {
-      //the players.moves is broken. if the player clicks on taken spaces it still counts as a move
-      //consider moving the counter somewhere else
-      players.moves++;
+      //count as a move if the square is empty
+      if (gameBoard[element.dataset.row][element.dataset.col] === '') {
+        players.moves++;
+      }
       console.log(`moves: ${players.moves}`);
       const row = element.dataset.row;
       const col = element.dataset.col;
@@ -218,11 +219,15 @@ const checkWin = function (players) {
 };
 
 //declare winner
+
+//will change the logic to update a div that already exists in the dom
+//instead of generating a new one
 const declareWinner = function (winner, players) {
   const body = document.body;
   const div = document.createElement('div');
   const winnerText = document.createElement('h2');
   const btn = document.createElement('button');
+  const results = document.querySelector('.results');
 
   btn.addEventListener('click', () => {
     //reset game board / start new round
@@ -240,8 +245,18 @@ const declareWinner = function (winner, players) {
 
   btn.textContent = 'Play again';
   winnerText.textContent = `${winner} wins! player score: ${players.playerScore} computer score: ${players.computerScore}`;
-  div.classList = 'winner';
-  div.append(winnerText);
-  div.append(btn);
-  body.insertBefore(div, body.firstChild);
+
+  results.classList.add('winner');
+  results.append(winnerText);
+  results.append(btn);
+
+  //   div.classList = 'winner';
+  //   div.append(winnerText);
+  //   div.append(btn);
+  //   body.insertBefore(div, body.firstChild);
 };
+
+//need to work on better responsive layout for the results announcement
+//add score to header
+//and restart button to header
+//add announcement for tie game situation
