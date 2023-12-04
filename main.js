@@ -84,10 +84,7 @@ const selectBox = function (players) {
   });
 };
 
-//need to add logic to determine if there is a tie
-//fix issue where declareWinner runs twice. probably has to do with checkWin function
-//need to fix score tracking
-//need to add play another round button after game is finished
+//need to fix logic to determine if there is a tie
 //play round of tic tac toe
 const playGame = function (row, col, players) {
   //player one selects square
@@ -102,9 +99,12 @@ const playGame = function (row, col, players) {
   const isWinner = checkWin(players);
 
   if (isWinner) {
-    return 'someone won. check #1';
+    players.moves = 0;
+    return;
   } else if (!isWinner && players.moves === 5) {
-    return 'tie game!';
+    players.moves = 0;
+    console.log('tie game!');
+    return;
   }
 
   //declare random indices
@@ -213,6 +213,7 @@ const checkWin = function (players) {
     declareWinner(winner, players);
     return true;
   }
+
   return false; // No win
 };
 
