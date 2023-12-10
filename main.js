@@ -51,12 +51,21 @@ const renderGameBoard = function () {
 const playerSelect = (function () {
   const x = document.querySelector('.x');
   const o = document.querySelector('.o');
+  const arrow = document.querySelector('.arrow');
+  const score = document.querySelector('.scoreText');
+
+  //reset page when arrow clicked
+  arrow.addEventListener('click', () => {
+    window.location.reload(true);
+  });
 
   o.addEventListener('click', function () {
     const players = createPlayer('o');
     console.log(`selected ${players.player}`);
     renderGameBoard();
     selectBox(players);
+    arrow.style.display = 'flex';
+    score.style.display = 'block';
   });
 
   x.addEventListener('click', function () {
@@ -64,6 +73,8 @@ const playerSelect = (function () {
     console.log(`selected ${players.player}`);
     renderGameBoard();
     selectBox(players);
+    arrow.style.display = 'block';
+    score.style.display = 'block';
   });
 })();
 
@@ -218,16 +229,15 @@ const checkWin = function (players) {
   return false; // No win
 };
 
-//declare winner
-
-//will change the logic to update a div that already exists in the dom
-//instead of generating a new one
+//declare winner in results div
 const declareWinner = function (winner, players) {
   const body = document.body;
   const div = document.createElement('div');
   const winnerText = document.createElement('h2');
   const btn = document.createElement('button');
   const results = document.querySelector('.results');
+  // const scoreDiv = document.querySelector('.score');
+  const scoreText = document.querySelector('.scoreText');
 
   btn.addEventListener('click', () => {
     //reset game board / start new round
@@ -244,19 +254,14 @@ const declareWinner = function (winner, players) {
   });
 
   btn.textContent = 'Play again';
-  winnerText.textContent = `${winner} wins! player score: ${players.playerScore} computer score: ${players.computerScore}`;
+  winnerText.textContent = `${winner} wins!`;
+  scoreText.textContent = `Player: ${players.playerScore} Bot: ${players.computerScore}`;
 
   results.classList.add('winner');
   results.append(winnerText);
   results.append(btn);
-
-  //   div.classList = 'winner';
-  //   div.append(winnerText);
-  //   div.append(btn);
-  //   body.insertBefore(div, body.firstChild);
 };
 
+//winner announce doesn't clear out after every game. it just keeps stacking after every round
 //need to work on better responsive layout for the results announcement
-//add score to header
-//and restart button to header
 //add announcement for tie game situation
