@@ -96,7 +96,6 @@ const selectBox = function (players) {
   });
 };
 
-//need to fix logic to determine if there is a tie
 //play round of tic tac toe
 const playGame = function (row, col, players) {
   //player one selects square
@@ -106,16 +105,7 @@ const playGame = function (row, col, players) {
     return 'choose another square';
   }
 
-  //check to handle tie game
-  //else if needs more actions to trigger tie event
-  const isWinner = checkWin(players);
-
-  if (isWinner) {
-    players.moves = 0;
-    return;
-  } else if (!isWinner && players.moves === 5) {
-    players.moves = 0;
-    console.log('tie game!');
+  if (checkWin(players)) {
     return;
   }
 
@@ -135,15 +125,15 @@ const playGame = function (row, col, players) {
     randomColumn = getRandomIndex();
   }
 
-  //computer plays at empty index
+  //computer plays at random empty index
   if (gameBoard[randomRow][randomColumn] === '') {
     gameBoard[randomRow][randomColumn] = players.computer;
   }
 
   renderGameBoard();
 
-  if (checkWin(players) === true) {
-    return 'someone won!';
+  if (checkWin(players)) {
+    return;
   }
 
   selectBox(players);
@@ -151,6 +141,8 @@ const playGame = function (row, col, players) {
 
 //check if there is a winner
 const checkWin = function (players) {
+  let winner = null;
+
   // Check rows and columns
   for (let i = 0; i < 3; i++) {
     // Row win
@@ -159,84 +151,66 @@ const checkWin = function (players) {
       gameBoard[i][0] === gameBoard[i][1] &&
       gameBoard[i][0] === gameBoard[i][2]
     ) {
-      const winner = gameBoard[i][0];
-      //add to winner's score
-      if (winner === players.player) {
-        players.playerScore++;
-      } else {
-        players.computerScore++;
-      }
-
-      renderGameBoard();
-      declareWinner(winner, players);
-      return true;
+      winner = gameBoard[i][0];
+      break;
     }
-    // column win
+    // Column win
     if (
       gameBoard[0][i] !== '' &&
       gameBoard[0][i] === gameBoard[1][i] &&
       gameBoard[0][i] === gameBoard[2][i]
     ) {
-      const winner = gameBoard[0][i];
-      //add to winner's score
-      if (winner === players.player) {
-        players.playerScore++;
-      } else {
-        players.computerScore++;
-      }
-      renderGameBoard();
-      declareWinner(winner, players);
-      return true;
+      winner = gameBoard[0][i];
+      break;
     }
   }
 
   // Check diagonals
-  // Diagonal from top-left to bottom-right
   if (
     gameBoard[0][0] !== '' &&
     gameBoard[0][0] === gameBoard[1][1] &&
     gameBoard[0][0] === gameBoard[2][2]
   ) {
-    const winner = gameBoard[0][0];
-    //add to winner's score
-    if (winner === players.player) {
-      players.playerScore++;
-    } else {
-      players.computerScore++;
-    }
-    renderGameBoard();
-    declareWinner(winner, players);
-    return true;
+    winner = gameBoard[0][0];
   }
-  // Diagonal from top-right to bottom-left
   if (
     gameBoard[0][2] !== '' &&
     gameBoard[0][2] === gameBoard[1][1] &&
     gameBoard[0][2] === gameBoard[2][0]
   ) {
-    const winner = gameBoard[0][2];
-    //add to winner's score
+    winner = gameBoard[0][2];
+  }
+
+  // Handle tie
+  if (players.moves === 5 && winner === null) {
+    renderGameBoard();
+    declareWinner('tie', players);
+    return true;
+  }
+
+  if (winner !== null) {
+    // Add to winner's score
     if (winner === players.player) {
       players.playerScore++;
-    } else {
+    } else if (winner === players.computer) {
       players.computerScore++;
     }
+
+    players.moves = 0;
     renderGameBoard();
     declareWinner(winner, players);
     return true;
   }
 
-  return false; // No win
+  return false;
 };
 
 //declare winner in results div
 const declareWinner = function (winner, players) {
-  const body = document.body;
-  const div = document.createElement('div');
+  // const body = document.body;
   const winnerText = document.createElement('h2');
   const btn = document.createElement('button');
   const results = document.querySelector('.results');
-  // const scoreDiv = document.querySelector('.score');
   const scoreText = document.querySelector('.scoreText');
 
   btn.addEventListener('click', () => {
@@ -246,22 +220,26 @@ const declareWinner = function (winner, players) {
         gameBoard[i][j] = '';
       }
     }
-    //this works at removing the announcement div
-    //will be a problem if this div is no longer the first child
-    body.removeChild(body.firstChild);
+
+    //clear out the results div
+    while (results.firstChild) {
+      results.removeChild(results.firstChild);
+    }
+
     renderGameBoard();
     selectBox(players);
   });
 
   btn.textContent = 'Play again';
-  winnerText.textContent = `${winner} wins!`;
+  if (winner === 'tie') {
+    winnerText.textContent = `Tie Game!`;
+  } else {
+    winnerText.textContent = `${winner} wins!`;
+  }
+
   scoreText.textContent = `Player: ${players.playerScore} Bot: ${players.computerScore}`;
 
   results.classList.add('winner');
   results.append(winnerText);
   results.append(btn);
 };
-
-//winner announce doesn't clear out after every game. it just keeps stacking after every round
-//need to work on better responsive layout for the results announcement
-//add announcement for tie game situation

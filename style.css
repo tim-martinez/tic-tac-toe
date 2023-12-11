@@ -33,6 +33,7 @@ body {
   width: 200px;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .back {
@@ -57,11 +58,11 @@ body {
   width: 200px;
   display: flex;
   justify-content: end;
-  margin-right: 25px;
 }
 
 .scoreText {
   display: none;
+  font-weight: 600;
 }
 
 .container {
